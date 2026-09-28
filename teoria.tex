@@ -1,0 +1,474 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\renewcommand{\abstractname}{Sommario}
+\renewcommand{\figurename}{Figura}
+\AtBeginDocument{\renewcommand{\proofname}{Dimostrazione}}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage[margin=2.4cm]{geometry}
+\usepackage{hyperref}
+
+\newtheorem{prop}{Proposizione}
+\theoremstyle{remark}
+\newtheorem*{oss}{Osservazione}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\bb}{\mathbf{b}}
+\newcommand{\x}{\mathbf{x}}
+\newcommand{\z}{\mathbf{z}}
+
+\title{Stili di gioco e gruppi di lavoro bilanciati\\
+\large PCA, metodo delle potenze e decomposizione della varianza\\ applicati a una squadra di rugby}
+\author{Matteo Guerrucci}
+\date{Progetto di Analisi Numerica --- settembre 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Una rosa di $N=25$ giocatori \`e descritta da $D=10$ statistiche per 80 minuti.
+Con l'analisi delle componenti principali (PCA) si individuano pochi \emph{assi di stile di gioco};
+le componenti sono calcolate con un metodo delle potenze implementato da zero, con deflazione,
+e verificate contro la SVD. Nello spazio degli stili si formano poi 5 gruppi di lavoro
+\emph{bilanciati} minimizzando la varianza tra i gruppi: per la decomposizione della varianza
+questo equivale a mescolare in ogni gruppo giocatori forti e deboli su ogni asse.
+I dati sono sintetici.
+\end{abstract}
+
+%=====================================================================
+\section{Richiami: valore atteso, varianza, covarianza}
+Riferimento: M.~P.~Deisenroth, A.~A.~Faisal, C.~S.~Ong, \emph{Mathematics for Machine Learning},
+Cambridge University Press, 2020 (cap.~6, statistiche riassuntive; cap.~10, PCA). Il libro usa la
+convenzione $X\in\R^{D\times N}$ (dati per colonne) e il fattore $1/N$; qui $X\in\R^{N\times D}$
+(una riga per giocatore) e $1/(N-1)$, lo stimatore non distorto.
+
+\paragraph{Valore atteso e varianza.}
+Per una variabile aleatoria $x$ con media $\mu=\mathbb{E}[x]$:
+\[
+\mathbb{V}[x]=\mathbb{E}\big[(x-\mu)^2\big]=\mathbb{E}[x^2]-\big(\mathbb{E}[x]\big)^2,
+\qquad \sigma=\sqrt{\mathbb{V}[x]}\ \ \text{(deviazione standard)}.
+\]
+Per un vettore aleatorio $\x\in\R^D$ con media $\boldsymbol\mu$, la matrice di covarianza \`e
+\[
+\Sigma=\operatorname{Cov}[\x]=\mathbb{E}\big[(\x-\boldsymbol\mu)(\x-\boldsymbol\mu)^T\big],
+\qquad \Sigma_{ij}=\operatorname{Cov}[x_i,x_j],\quad \Sigma_{jj}=\mathbb{V}[x_j].
+\]
+\paragraph{Versioni empiriche.} Da $N$ osservazioni $\x_1,\dots,\x_N$:
+\[
+\bar\x=\frac1N\sum_n\x_n,\qquad
+C=\frac{1}{N-1}\sum_n(\x_n-\bar\x)(\x_n-\bar\x)^T=\frac{1}{N-1}X^TX\ \ (X\text{ centrata}).
+\]
+
+\paragraph{Perch\'e si centra prima: un fatto numerico.}
+Le due espressioni della varianza sono uguali in aritmetica esatta, ma non in floating point.
+$\mathbb{E}[x^2]-(\mathbb{E}[x])^2$ sottrae due numeri grandi e quasi uguali: \`e una
+\textbf{cancellazione catastrofica}. Con i valori $\{4,7,13,16\}$ (varianza esatta $22.5$) spostati
+di $10^9$, la formula a una passata d\`a $-128$ (una varianza negativa), quella a due passate
+$\mathbb{E}[(x-\mu)^2]$ d\`a $22.5$. Per questo il codice centra sempre i dati prima di calcolare $C$.
+
+\paragraph{Trasformazioni lineari.}
+Se $\mathbf y=A\x+\mathbf c$, allora
+\[
+\mathbb{E}[\mathbf y]=A\boldsymbol\mu+\mathbf c,\qquad \operatorname{Cov}[\mathbf y]=A\,\Sigma\,A^T .
+\]
+In particolare, per la proiezione su una direzione $\bb$ ($A=\bb^T$):
+\[
+\boxed{\ \mathbb{V}[\bb^T\x]=\bb^T\Sigma\,\bb\ }
+\]
+\`e il punto di partenza della PCA: la varianza lungo una direzione \`e una forma quadratica nella
+matrice di covarianza. Con $B^T$ al posto di $\bb^T$: $\operatorname{Cov}[B^T\x]=B^T\Sigma B$.
+
+\paragraph{Geometria delle variabili aleatorie.}
+Per variabili a media nulla, $\langle x,y\rangle:=\operatorname{Cov}[x,y]$ \`e un prodotto scalare.
+La norma indotta \`e la deviazione standard, $\|x\|=\sqrt{\operatorname{Cov}[x,x]}=\sigma_x$, e
+\[
+\cos\theta=\frac{\langle x,y\rangle}{\|x\|\,\|y\|}=\frac{\operatorname{Cov}[x,y]}{\sigma_x\sigma_y}=\rho(x,y),
+\]
+cio\`e \textbf{la correlazione \`e il coseno dell'angolo} tra le due variabili.
+Variabili \textbf{scorrelate} sono \textbf{ortogonali}. In questa geometria la PCA cerca direzioni
+ortogonali: gli score lungo componenti diverse sono scorrelati, perch\'e
+$\operatorname{Cov}[\bb_i^T\x,\bb_j^T\x]=\bb_i^T\Sigma\bb_j=\lambda_j\bb_i^T\bb_j=0$ per $i\ne j$.
+Inoltre $\operatorname{tr}(\Sigma)=\sum_j\mathbb{V}[x_j]$ \`e la varianza totale (la somma dei quadrati
+delle ``lunghezze'' delle variabili).
+
+%=====================================================================
+\section{Dati e standardizzazione}
+Sia $X_{\text{raw}}\in\R^{N\times D}$ la matrice dei dati (una riga per giocatore).
+Ogni colonna viene centrata e divisa per la sua deviazione standard:
+\[
+X_{nj}=\frac{(X_{\text{raw}})_{nj}-\mu_j}{\sigma_j}.
+\]
+Senza standardizzazione le statistiche con valori grandi (metri guadagnati $\approx 50$)
+dominerebbero quelle con valori piccoli (offload $\approx 1$) solo per una questione di unit\`a di misura.
+
+\paragraph{Matrice di covarianza.}
+\[
+C=\frac{1}{N-1}X^{T}X\in\R^{D\times D}.
+\]
+Con dati standardizzati $C$ \`e la matrice di correlazione: $C_{jj}=1$ e $\operatorname{tr}(C)=D$.
+$C$ \`e \textbf{simmetrica} e \textbf{semidefinita positiva}; per il teorema spettrale ha autovalori
+reali $\lambda_1\ge\dots\ge\lambda_D\ge 0$ e autovettori ortonormali.
+
+\paragraph{Lettura geometrica.}
+Per colonne centrate $a,b$, la covarianza $\operatorname{cov}(a,b)=a^Tb/(N-1)$ \`e un prodotto scalare,
+la deviazione standard \`e la norma associata e la correlazione
+$\rho=\operatorname{cov}(a,b)/(\sigma_a\sigma_b)$ \`e il \textbf{coseno dell'angolo} tra le due colonne.
+La nuvola dei giocatori in $\R^D$ ha la forma di un ellissoide: gli autovettori di $C$ ne sono gli assi,
+gli autovalori la varianza lungo ciascun asse.
+
+%=====================================================================
+\section{PCA come problema di massima varianza}
+Si cerca una base ortonormale $B=[\bb_1,\dots,\bb_M]\in\R^{D\times M}$, $B^TB=I$
+($\bb_i^T\bb_j=\delta_{ij}$), e si proiettano i dati: $\z_n=B^T\x_n$.
+
+\paragraph{Varianza lungo una direzione.}
+Se $z_n=\bb^T\x_n$, allora
+\[
+\operatorname{Var}(z)=\frac{1}{N-1}\sum_n z_n^2=\frac{1}{N-1}(X\bb)^T(X\bb)=\bb^TC\bb .
+\]
+
+\subsection{Prima componente}
+\[
+\max_{\bb}\ \bb^TC\bb\qquad\text{con}\qquad \bb^T\bb=1 .
+\]
+Lagrangiana: $\ L(\bb,\lambda)=\bb^TC\bb+\lambda(1-\bb^T\bb)$.
+Poich\'e $C$ \`e simmetrica, $\nabla_{\bb}(\bb^TC\bb)=(C+C^T)\bb=2C\bb$, quindi
+\[
+\frac{\partial L}{\partial\bb}=2C\bb-2\lambda\bb=0\ \Longrightarrow\ C\bb=\lambda\bb,
+\qquad
+\frac{\partial L}{\partial\lambda}=1-\bb^T\bb=0 .
+\]
+I punti stazionari sono gli autovettori (normalizzati) di $C$. Moltiplicando $C\bb=\lambda\bb$ per $\bb^T$:
+\[
+\bb^TC\bb=\lambda\,\bb^T\bb=\lambda,
+\]
+cio\`e \textbf{la varianza lungo un autovettore \`e il suo autovalore}.
+Il massimo si ottiene con l'autovalore pi\`u grande $\lambda_1$: $\bb_1$ \`e la prima componente principale.
+
+\subsection{Seconda componente}
+\[
+\max_{\bb_2}\ \bb_2^TC\bb_2\qquad\text{con}\qquad \bb_2^T\bb_2=1,\ \ \bb_2^T\bb_1=0 .
+\]
+\[
+L=\bb_2^TC\bb_2+\lambda_2(1-\bb_2^T\bb_2)-\mu\,\bb_2^T\bb_1,
+\qquad
+\frac{\partial L}{\partial\bb_2}=2C\bb_2-2\lambda_2\bb_2-\mu\bb_1=0 .
+\]
+Moltiplicando a sinistra per $\bb_1^T$: il primo termine d\`a
+$2\bb_1^TC\bb_2=2(C\bb_1)^T\bb_2=2\lambda_1\bb_1^T\bb_2=0$, il secondo $-2\lambda_2\bb_1^T\bb_2=0$,
+il terzo $-\mu\,\bb_1^T\bb_1=-\mu$. Quindi $\mu=0$ e $C\bb_2=\lambda_2\bb_2$.
+Poich\'e $\bb_2\perp\bb_1$, tra gli autovettori rimasti il massimo \`e $\lambda_2$ (supponendo $\lambda_1>\lambda_2$).
+Per induzione, la $j$-esima componente \`e l'autovettore di $\lambda_j$.
+
+\subsection{Varianza spiegata}
+La varianza totale non dipende dalla base ortonormale:
+\[
+\sum_{j=1}^{D}\operatorname{Var}(X_{:,j})=\operatorname{tr}(C)=\sum_{j=1}^{D}\lambda_j .
+\]
+La frazione spiegata dalle prime $M$ componenti \`e $\sum_{j\le M}\lambda_j\big/\sum_{j}\lambda_j$.
+
+\subsection{Legame con la SVD}
+Se $X=U\Sigma V^T$, allora $X^TX=V\Sigma^2V^T$, quindi
+\[
+\lambda_j=\frac{\sigma_j^2}{N-1},\qquad \bb_j=\text{colonna $j$ di }V .
+\]
+In pratica si preferisce la SVD di $X$ al calcolo degli autovalori di $X^TX$ perch\'e
+$K_2(X^TX)=K_2(X)^2$: formare $X^TX$ eleva al quadrato il numero di condizionamento.
+
+\subsection{Seconda lettura: minimo errore di ricostruzione}
+La PCA si pu\`o ottenere anche senza parlare di varianza (MML, par.~10.3). Proietto ogni $\x_n$ sul
+sottospazio generato da $B$ e lo ricostruisco: $\tilde\x_n=BB^T\x_n$ ($BB^T$ \`e il proiettore
+ortogonale). Cerco la base che rende minimo l'errore medio di ricostruzione
+\[
+J_M=\frac{1}{N-1}\sum_n\|\x_n-\tilde\x_n\|^2 .
+\]
+Per Pitagora, $\|\x_n\|^2=\|\tilde\x_n\|^2+\|\x_n-\tilde\x_n\|^2$, quindi
+\[
+\underbrace{\frac{1}{N-1}\sum_n\|\x_n\|^2}_{\operatorname{tr}(C)\ \text{(fissa)}}
+=\underbrace{\sum_{j\le M}\bb_j^TC\bb_j}_{\text{varianza catturata}}+J_M .
+\]
+Minimizzare l'errore di ricostruzione equivale a massimizzare la varianza catturata: le due letture
+danno la \textbf{stessa} base, e all'ottimo
+\[
+J_M=\sum_{j>M}\lambda_j ,
+\]
+la somma degli autovalori scartati. \`E la stessa affermazione di Eckart--Young (Sezione~\ref{sec:rango}), scritta
+con gli autovalori di $C$ invece che con i valori singolari di $X$.
+
+\paragraph{I passi della PCA in pratica} (MML, par.~10.6): (1) sottrarre la media; (2) dividere per
+la deviazione standard; (3) calcolare autovalori e autovettori di $C$ (o la SVD di $X$); (4) proiettare,
+$\z_n=B^T\x_n$; (5) per tornare nello spazio originale, $\tilde\x_n=B\z_n$, poi moltiplicare per
+$\sigma_j$ e aggiungere $\mu_j$.
+
+\begin{oss}
+Se i giocatori fossero meno delle statistiche ($N<D$), $C$ avrebbe al pi\`u $N-1$ autovalori non
+nulli, e conviene lavorare con la matrice $N\times N$ $XX^T$: se $XX^T\mathbf u=\mu\mathbf u$ allora
+$X^TX(X^T\mathbf u)=\mu\,X^T\mathbf u$ (MML, par.~10.5). Con $N=25$, $D=10$ non serve.
+\end{oss}
+
+%=====================================================================
+\section{Metodo delle potenze}
+\paragraph{Algoritmo.}
+\begin{center}
+\begin{tabular}{l}
+$\mathbf v\leftarrow\mathbf v_0/\|\mathbf v_0\|$ \quad ($\mathbf v_0$ casuale)\\
+per $k=1,2,\dots$:\quad $\mathbf w=C\mathbf v$;\quad $\lambda^{(k)}=\mathbf v^T\mathbf w$;\quad
+$\mathbf v\leftarrow\mathbf w/\|\mathbf w\|$\\
+\quad stop se $|\lambda^{(k)}-\lambda^{(k-1)}|<\text{tol}\cdot|\lambda^{(k)}|$
+\end{tabular}
+\end{center}
+Il quoziente di Rayleigh $\lambda^{(k)}=\mathbf v^TC\mathbf v$ (con $\|\mathbf v\|=1$) si ottiene
+dallo stesso prodotto $\mathbf w=C\mathbf v$: un solo prodotto matrice--vettore per iterazione.
+Il vettore iniziale casuale ha, con probabilit\`a 1, una componente non nulla lungo $\bb_1$.
+
+\paragraph{Convergenza.}
+Scriviamo $\mathbf v_0=\sum_i c_i\bb_i$ con $c_1\neq 0$. Allora
+\[
+C^k\mathbf v_0=\sum_i c_i\lambda_i^k\bb_i
+=c_1\lambda_1^k\Big(\bb_1+\sum_{i\ge 2}\frac{c_i}{c_1}\Big(\frac{\lambda_i}{\lambda_1}\Big)^{k}\bb_i\Big).
+\]
+Se $|\lambda_2|<|\lambda_1|$ la direzione converge a $\bb_1$ con errore $O(|\lambda_2/\lambda_1|^k)$.
+Poich\'e $C$ \`e simmetrica, l'errore sul quoziente di Rayleigh \`e $O(|\lambda_2/\lambda_1|^{2k})$.
+La velocit\`a dipende dal \textbf{distacco} tra i primi due autovalori: se $\lambda_2\approx\lambda_1$
+la convergenza \`e lenta; se $\lambda_2=\lambda_1$ non c'\`e una direzione privilegiata.
+
+\paragraph{Deflazione.}
+\[
+C_1=C-\lambda_1\bb_1\bb_1^T .
+\]
+Per l'ortonormalit\`a degli autovettori, $C_1\bb_1=0$ e $C_1\bb_i=\lambda_i\bb_i$ per $i\ge 2$:
+il metodo delle potenze su $C_1$ converge a $\bb_2$, con velocit\`a $|\lambda_3/\lambda_2|$.
+La deflazione \`e la versione numerica del vincolo $\bb_2\perp\bb_1$ della lagrangiana.
+
+\paragraph{Risultati.}
+\begin{center}
+\begin{tabular}{cccc}
+\toprule
+$j$ & $\lambda_j$ (potenze) & rapporto che comanda & iterazioni\\
+\midrule
+1 & 3.94498513 & $\lambda_2/\lambda_1=0.75$ & 58\\
+2 & 2.97239586 & $\lambda_3/\lambda_2=0.35$ & 16\\
+3 & 1.04652146 & $\lambda_4/\lambda_3=0.70$ & 39\\
+\bottomrule
+\end{tabular}
+\end{center}
+Gli autovalori coincidono con quelli della SVD fino all'ultima cifra mostrata.
+Il fattore di riduzione dell'errore misurato per $\bb_1$ \`e $0.760$, contro il valore teorico
+$\lambda_2/\lambda_1=0.754$ (Figura~\ref{fig:pot}). Le prime tre componenti spiegano il $79.6\%$ della varianza.
+
+\begin{oss}
+Il criterio d'arresto \`e sull'autovalore, che converge con velocit\`a doppia: quando $\lambda^{(k)}$ \`e
+esatto a $10^{-12}$, l'autovettore lo \`e solo a circa $10^{-6}$. Se serve l'autovettore preciso
+ci si ferma sul residuo $\|C\mathbf v-\lambda\mathbf v\|$.
+\end{oss}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.72\textwidth]{fig_potenze_convergenza.png}
+\caption{Errore del metodo delle potenze per $\bb_1$: le curve sono parallele alle rette teoriche
+$|\lambda_2/\lambda_1|^k$ (autovettore) e $|\lambda_2/\lambda_1|^{2k}$ (Rayleigh).}
+\label{fig:pot}
+\end{figure}
+
+%=====================================================================
+\section{Accelerare il metodo: shift e potenze inverse}
+\paragraph{Shift.} $C-\sigma I$ ha gli stessi autovettori e autovalori $\lambda_i-\sigma$.
+Per $\bb_1$ il rapporto di convergenza diventa $\max_{i\ge2}|\lambda_i-\sigma|/|\lambda_1-\sigma|$,
+minimo per $\sigma^*=(\lambda_2+\lambda_D)/2$. Con i nostri dati $\sigma^*=1.504$: il rapporto scende
+da $0.753$ a $0.601$ e le iterazioni da 47 a 29.
+
+\paragraph{Potenze inverse con shift.} $(C-\sigma I)^{-1}$ ha autovalori $1/(\lambda_i-\sigma)$: domina
+l'autovalore pi\`u vicino a $\sigma$, con rapporto
+$|\lambda_j-\sigma|/|\lambda_{\text{vicino}}-\sigma|$. Non si calcola l'inversa: a ogni passo si risolve
+$(C-\sigma I)\mathbf w=\mathbf v$. La fattorizzazione $LU$ (con pivoting) si calcola \textbf{una volta},
+e ogni iterazione costa due sostituzioni triangolari, $O(D^2)$ invece di $O(D^3)$.
+\begin{center}
+\begin{tabular}{ccccc}
+\toprule
+cerco & $\sigma$ & rapporto & iterazioni & errore su $\lambda$\\
+\midrule
+$\lambda_1$ & 3.8 & 0.175 & 9 & $2\cdot10^{-14}$\\
+$\lambda_2$ & 3.0 & 0.029 & 5 & $3\cdot10^{-15}$\\
+$\lambda_3$ & 1.0 & 0.171 & 8 & $1\cdot10^{-14}$\\
+$\lambda_{10}$ & 0 & 0.476 & 20 & $2\cdot10^{-15}$\\
+\bottomrule
+\end{tabular}
+\end{center}
+Con $\sigma=0$ si ottiene l'autovalore pi\`u piccolo (potenze inverse ``pure'').
+Scegliendo $\sigma$ si pu\`o calcolare \emph{qualunque} autovalore, senza deflazione.
+
+\paragraph{A cosa serve nel progetto: il condizionamento.}
+Con una matrice $10\times10$ la velocit\`a non \`e un problema. L'uso concreto \`e un altro:
+metodo delle potenze e potenze inverse con $\sigma=0$ danno gli autovalori estremi, e per una
+matrice simmetrica definita positiva
+\[
+K_2(C)=\frac{\lambda_{\max}}{\lambda_{\min}}=\frac{3.945}{0.0364}=108.4,
+\qquad
+K_2(X)=\frac{\sigma_{\max}}{\sigma_{\min}}=10.41,\qquad K_2(X)^2=108.4 .
+\]
+\`E la verifica numerica di $K_2(X^TX)=K_2(X)^2$ e quantifica perch\'e si preferisce la SVD di $X$.
+Inoltre $\lambda_{\min}\approx 0$ dice che lungo $\bb_{10}$ i giocatori quasi non variano: esiste una
+combinazione di statistiche quasi costante, cio\`e statistiche quasi ridondanti.
+
+%=====================================================================
+\section{Affidabilit\`a degli assi}\label{sec:aff}
+Si perturbano i dati con rumore gaussiano pari al $10\%$ della deviazione standard (300 prove) e si
+misura l'angolo tra ogni autovettore originale e quello perturbato.
+\begin{center}
+\begin{tabular}{ccccc}
+\toprule
+asse & $\lambda_j$ & gap con il vicino & rotazione mediana & rotazione 90\%\\
+\midrule
+$\bb_1$ & 3.945 & 0.973 & $2.5^\circ$ & $5.1^\circ$\\
+$\bb_2$ & 2.972 & 0.973 & $2.9^\circ$ & $5.3^\circ$\\
+$\bb_3$ & 1.047 & 0.318 & $5.3^\circ$ & $9.2^\circ$\\
+$\bb_4$ & 0.728 & 0.178 & $8.3^\circ$ & $13.6^\circ$\\
+\bottomrule
+\end{tabular}
+\end{center}
+Pi\`u il gap tra un autovalore e i suoi vicini \`e piccolo, pi\`u l'autovettore \`e \textbf{mal condizionato}:
+una piccola perturbazione dei dati lo fa ruotare molto. Al limite $\lambda_j=\lambda_{j+1}$ l'autovettore non
+\`e nemmeno definito (qualunque direzione del piano \`e un autovettore). \`E lo stesso gap che governa la
+velocit\`a del metodo delle potenze: \emph{convergenza lenta e instabilit\`a hanno la stessa causa}.
+Per questo si interpretano solo $\bb_1$ e $\bb_2$.
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.55\textwidth]{fig_sensibilita.png}
+\caption{Rotazione degli autovettori con rumore del 10\% sui dati: cresce al diminuire del gap.}
+\end{figure}
+
+%=====================================================================
+\section{Rango $k$ e dati mancanti}\label{sec:rango}
+\paragraph{Eckart--Young.} Tra le matrici di rango $k$, la pi\`u vicina a $X$ \`e
+$X_k=U_k\Sigma_kV_k^T$, con
+\[
+\|X-X_k\|_2=\sigma_{k+1},\qquad \|X-X_k\|_F=\Big(\sum_{i>k}\sigma_i^2\Big)^{1/2}.
+\]
+Verificato numericamente per ogni $k$. Poich\'e $\sum_i\sigma_i^2=\|X\|_F^2$, vale
+$\big(\|X-X_k\|_F/\|X\|_F\big)^2=1-\text{varianza spiegata}$: con $k=3$ l'errore relativo \`e
+$45\%=\sqrt{1-0.796}$.
+
+\paragraph{Imputazione (i dati ``disordinati'').} Due giocatori hanno 4 statistiche mancanti. Invece di
+sostituirle con la media, si usa la struttura di basso rango: le statistiche sono correlate, quindi quelle
+osservate informano su quelle mancanti. Iterazione di punto fisso: si parte con i buchi uguali alla media;
+a ogni passo si calcola l'approssimazione di rango $k$ e si sostituiscono \emph{solo} i valori mancanti
+con quelli ricostruiti; ci si ferma quando i valori imputati non cambiano pi\`u.
+Errore sui valori mancanti (RMSE, in deviazioni standard):
+\begin{center}
+\begin{tabular}{lccccc}
+\toprule
+metodo & media & $k=1$ & $k=2$ & $k=3$ & $k=4$\\
+\midrule
+RMSE & 1.19 & 0.95 & \textbf{0.75} & 0.96 & 3.16 (non converge)\\
+\bottomrule
+\end{tabular}
+\end{center}
+Con $k$ piccolo l'imputazione migliora la media del $37\%$. Con $k$ troppo grande il modello ha abbastanza
+libert\`a da adattarsi ai dati osservati senza vincolare quelli mancanti: il punto fisso diventa lentissimo o
+non converge e l'errore esplode. La convergenza, quando c'\`e, \`e lineare (fattore $0.915$ per $k=3$).
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{fig_eckart_young.png}\\[4pt]
+\includegraphics[width=0.9\textwidth]{fig_imputazione.png}
+\caption{Sopra: autovalori ed errore di rango $k$. Sotto: imputazione con SVD iterativa e convergenza del punto fisso.}
+\end{figure}
+
+%=====================================================================
+\section{Interpretazione degli assi}
+Il nome di un asse si legge dai pesi (loadings) pi\`u grandi, positivi e negativi.
+\begin{itemize}
+\item $\bb_1$ \textbf{contatto $\leftrightarrow$ gioco al largo}: pesi positivi su ruck, placcaggi, touche;
+negativi su metri guadagnati, difensori battuti, calci. Piloni e seconde linee da una parte, ali ed estremo dall'altra.
+\item $\bb_2$ \textbf{portatore di palla $\leftrightarrow$ chi porta poco palla}: pesi positivi su portate, offload,
+difensori battuti. Dal lato opposto ci sono sia i registi sia i piloni: l'interpretazione iniziale
+``regista contro portatore'' \`e stata corretta dai dati.
+\end{itemize}
+\begin{oss}
+Gli assi descrivono \textbf{stili}, non livelli: uno score basso su $\bb_1$ per un'ala non indica una carenza.
+Per parlare di margini di miglioramento bisogna confrontare giocatori dello stesso ruolo (Sezione~\ref{sec:dir}).
+Inoltre la terza componente \`e meno affidabile: $\lambda_3=1.05$ e $\lambda_4=0.73$ sono vicini, e un piccolo
+distacco tra autovalori rende l'autovettore sensibile al rumore dei dati.
+\end{oss}
+
+%=====================================================================
+\section{Gruppi di lavoro bilanciati}
+Siano $\z_n\in\R^{K}$ gli score ($K=3$), con media della squadra nulla. Si dividono i giocatori in
+$G=5$ gruppi da 5; $\bar\z_g$ \`e la media del gruppo $g$ e $n_g$ il numero di giocatori.
+
+\begin{prop}[Decomposizione della varianza]
+\[
+\underbrace{\sum_n\|\z_n\|^2}_{SS_{\text{tot}}}
+=\underbrace{\sum_g n_g\|\bar\z_g\|^2}_{SS_{\text{tra}}}
++\underbrace{\sum_g\sum_{n\in g}\|\z_n-\bar\z_g\|^2}_{SS_{\text{dentro}}} .
+\]
+\end{prop}
+\begin{proof}
+Per ogni gruppo si scrive $\z_n=(\z_n-\bar\z_g)+\bar\z_g$ e si sviluppa il quadrato:
+\[
+\sum_{n\in g}\|\z_n\|^2=\sum_{n\in g}\|\z_n-\bar\z_g\|^2+n_g\|\bar\z_g\|^2
++2\,\bar\z_g^T\sum_{n\in g}(\z_n-\bar\z_g).
+\]
+L'ultima somma \`e nulla per definizione di media. Sommando sui gruppi si ottiene la tesi.
+\end{proof}
+
+\paragraph{Obiettivo.}
+$SS_{\text{tot}}$ \`e fissata dai dati, quindi
+\[
+\min SS_{\text{tra}}\iff\max SS_{\text{dentro}} :
+\]
+gruppi con la stessa media della squadra sono, necessariamente, gruppi internamente vari,
+in cui giocatori forti e deboli su ogni asse sono mescolati.
+Gli assi non vanno ripesati: lo score lungo $\bb_j$ ha gi\`a varianza $\lambda_j$.
+
+\paragraph{Algoritmo di scambio.}
+Si parte da una divisione casuale; si provano tutti gli scambi di due giocatori di gruppi diversi e si
+applica quello che diminuisce di pi\`u $SS_{\text{tra}}$; ci si ferma quando nessuno scambio migliora.
+L'algoritmo trova un \textbf{minimo locale}: accetta solo scambi migliorativi e non pu\`o superare
+una configurazione in cui serve prima peggiorare. Le divisioni possibili sono circa
+$25!/((5!)^5\,5!)\approx 5\cdot 10^{12}$, troppe da esplorare; si usano 30 partenze casuali e si tiene la migliore.
+
+\paragraph{Risultati.}
+$SS_{\text{tot}}=191.13$, $SS_{\text{tra}}=0.30$ ($0.16\%$), $SS_{\text{dentro}}=190.83$; la somma verifica
+l'identit\`a a $10^{-14}$. Su 5000 divisioni casuali $SS_{\text{tra}}$ ha media $31.7$ e minimo $4.2$
+(Figura~\ref{fig:gruppi}). $SS_{\text{tra}}$ non arriva a 0 perch\'e ogni gruppo dovrebbe avere media
+esattamente nulla su tutti e tre gli assi con esattamente 5 giocatori: in generale non \`e possibile.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.49\textwidth]{fig_gruppi.png}\hfill
+\includegraphics[width=0.49\textwidth]{fig_confronto_casuali.png}
+\caption{Sinistra: giocatori nel piano $(\bb_1,\bb_2)$ colorati per gruppo; le X sono le medie dei gruppi,
+tutte vicine all'origine. Destra: $SS_{\text{tra}}$ di 5000 divisioni casuali contro la divisione ottimizzata.}
+\label{fig:gruppi}
+\end{figure}
+
+%=====================================================================
+\section{Direzioni di lavoro}\label{sec:dir}
+Per ogni giocatore si confronta lo score con la media del suo ruolo. Su un asse $j$ il verso tipico
+del ruolo \`e $s=\operatorname{segno}(\bar z_{\text{ruolo},j})$; l'asse si usa solo se il ruolo sta
+chiaramente da una parte ($|\bar z_{\text{ruolo},j}|\ge 0.5\sqrt{\lambda_j}$). Il deficit \`e
+\[
+d_j=s\,\frac{z_{n,j}-\bar z_{\text{ruolo},j}}{\sqrt{\lambda_j}} ,
+\]
+e si segnala l'asse con deficit pi\`u negativo (sotto $-0.25$). Le statistiche da allenare sono quelle
+con peso grande nel verso $s$ di $\bb_j$ che il ruolo usa davvero e in cui il giocatore \`e sotto la media
+del ruolo; il mentore \`e il compagno di gruppo pi\`u forte su quelle statistiche.
+Esempio: Seconda linea 1, deficit $-0.46$ su $\bb_1$, allenare ruck e placcaggi, mentore Terza linea 2.
+
+%=====================================================================
+\section{Limiti}
+\begin{itemize}
+\item Dati sintetici, $N=25$: le componenti oltre la seconda sono poco affidabili (Sezione~\ref{sec:aff}).
+\item L'algoritmo di scambio \`e un'euristica: nessuna garanzia di ottimo globale.
+\item La PCA descrive stili, non livelli: la direzione di lavoro richiede ipotesi aggiuntive
+(confronto con il ruolo).
+\item Sviluppi: dati reali di un campionato (assi stimati su molti giocatori, gruppi dentro una squadra);
+per $N$ grande il prodotto $C\mathbf v=X^T(X\mathbf v)/(N-1)$ evita di formare $C$.
+\end{itemize}
+
+\begin{thebibliography}{9}
+\bibitem{mml} M. P. Deisenroth, A. A. Faisal, C. S. Ong, \emph{Mathematics for Machine Learning}, Cambridge University Press, 2020. Cap. 6 (statistiche riassuntive, geometria delle variabili aleatorie) e cap. 10 (PCA).
+\end{thebibliography}
+
+\end{document}
