@@ -23,6 +23,7 @@ Progetto di Analisi Numerica. Una rosa di rugby di 25 giocatori è descritta da 
 | 8 | Approssimazione di rango k e dati mancanti | **Eckart–Young**, imputazione con SVD iterativa (**punto fisso**) |
 
 La derivazione completa è in [`teoria.pdf`](teoria.pdf). Riferimento teorico: Deisenroth, Faisal, Ong, *Mathematics for Machine Learning* (2020), cap. 6 e 10.
+🎬 [Guarda l'animazione](https://matteoguerrucci7-max.github.io/PCA-Rugby/animazione/)
 
 ## Risultati principali
 
