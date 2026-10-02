@@ -36,12 +36,12 @@ La derivazione completa è in [`teoria.pdf`](teoria.pdf). Riferimento teorico: D
 - **Dati mancanti**: l'imputazione di rango 2 riduce l'errore del 37% rispetto alla media; con rango troppo alto il punto fisso non converge.
 
 | Convergenza delle potenze | Gruppi nello spazio degli stili | Contro divisioni casuali |
-|---|---|---|
-| ![](fig_potenze_convergenza.png) | ![](fig_gruppi.png) | ![](fig_confronto_casuali.png) |
+| --- | --- | --- |
+| ![](figure/fig_potenze_convergenza.png) | ![](figure/fig_gruppi.png) | ![](figure/fig_confronto_casuali.png) |
 
 | Rango k | Dati mancanti | Sensibilità |
-|---|---|---|
-| ![](fig_eckart_young.png) | ![](fig_imputazione.png) | ![](fig_sensibilita.png) |
+| --- | --- | --- |
+| ![](figure/fig_eckart_young.png) | ![](figure/fig_imputazione.png) | ![](figure/fig_sensibilita.png) |
 ## Esempio: direzioni di lavoro
 
 Per ogni giocatore si confrontano le coordinate sugli assi con la media del
