@@ -42,6 +42,23 @@ La derivazione completa è in [`teoria.pdf`](teoria.pdf). Riferimento teorico: D
 | Rango k | Dati mancanti | Sensibilità |
 |---|---|---|
 | ![](fig_eckart_young.png) | ![](fig_imputazione.png) | ![](fig_sensibilita.png) |
+## Esempio: direzioni di lavoro
+
+Per ogni giocatore si confrontano le coordinate sugli assi con la media del
+**proprio ruolo** (la PCA descrive stili, non livelli). Se uno è
+sotto la media del ruolo su un asse, il programma indica le statistiche
+da allenare e un mentore, cioè un giocatore forte su quell'asse.
+
+| Giocatore         | Asse debole | Da allenare                                          | Mentore         |
+| ----------------- | ----------- | ---------------------------------------------------- | --------------- |
+| Pilone 3          | b2 (−0,28)  | ruck_offensive                                       | Seconda linea 1 |
+| Seconda linea 1   | b1 (−0,46)  | ruck_offensive, placcaggi_effettuati, placcaggi_dominanti | Terza linea 2 |
+| Terza linea 4     | b2 (−0,43)  | portate, offload, metri_guadagnati                   | Estremo 1       |
+| Apertura 1        | b2 (−0,29)  | passaggi, calci_in_gioco                             | Centro 2        |
+| Centro 3          | b2 (−0,56)  | portate, offload, difensori_battuti                  | Estremo 1       |
+
+Gli altri 20 giocatori sono in linea o sopra la media del loro ruolo.
+Output completo: `python blocco3_gruppi.py`.
 
 ## Uso
 
