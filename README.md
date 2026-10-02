@@ -24,7 +24,7 @@ Progetto di Analisi Numerica. Una rosa di rugby di 25 giocatori è descritta da 
 
 La derivazione completa è in [`teoria.pdf`](teoria.pdf). Riferimento teorico: Deisenroth, Faisal, Ong, *Mathematics for Machine Learning* (2020), cap. 6 e 10.
 🎬 [Guarda l'animazione](https://matteoguerrucci7-max.github.io/PCA-Rugby/animazione/)
-[Direzioni di lavoro in 3D (animazione)](https://htmlpreview.github.io/?https://raw.githubusercontent.com/matteoguerrucci7-max/Numerical-Methods/main/download/pca_rugby_direzioni_3d.html)
+
 
 ## Risultati principali
 
