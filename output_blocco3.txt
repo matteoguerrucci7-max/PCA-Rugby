@@ -1,0 +1,55 @@
+assi: b1 = contatto (+) / gioco al largo (-)
+      b2 = portatore di palla (+) / chi porta poco palla: registi e piloni (-)
+varianza spiegata con K=3: 79.6%
+
+=== Decomposizione della varianza (gruppi ottimizzati) ===
+  SS_tot = 191.1337   SS_tra = 0.3033   SS_dentro = 190.8304
+  controllo SS_tra + SS_dentro - SS_tot = -2.8e-14
+  quota tra i gruppi: 0.16%
+
+=== Confronto con 5000 divisioni casuali ===
+  SS_tra casuale: media 31.742, minimo 4.157
+  SS_tra ottimizzato: 0.3033  (1.0% della media casuale)
+  divisioni casuali migliori dell'ottimizzata: 0.00%
+
+=== Gruppi ===
+  Gruppo 1  media (b1,b2,b3) = (+0.10, +0.03, -0.11)
+     Pilone 1, Pilone 2, Terza linea 4, Centro 3, Estremo 1
+  Gruppo 2  media (b1,b2,b3) = (+0.01, -0.02, +0.09)
+     Tallonatore 1, Seconda linea 2, Mediano mischia 1, Centro 1, Ala 3
+  Gruppo 3  media (b1,b2,b3) = (+0.03, -0.02, -0.05)
+     Pilone 4, Tallonatore 2, Terza linea 3, Apertura 1, Centro 2
+  Gruppo 4  media (b1,b2,b3) = (-0.08, -0.05, -0.02)
+     Pilone 3, Seconda linea 1, Terza linea 2, Apertura 2, Ala 2
+  Gruppo 5  media (b1,b2,b3) = (-0.07, +0.06, +0.09)
+     Seconda linea 3, Terza linea 1, Terza linea 5, Mediano mischia 2, Ala 1
+
+=== Direzioni di lavoro (confronto con il proprio ruolo) ===
+  giocatore          asse         da allenare                                          mentore
+  Pilone 1           -            in linea o sopra la media del ruolo                  -
+  Pilone 2           -            in linea o sopra la media del ruolo                  -
+  Pilone 3           b2 (-0.28)   ruck_offensive                                       Seconda linea 1
+  Pilone 4           -            in linea o sopra la media del ruolo                  -
+  Tallonatore 1      -            in linea o sopra la media del ruolo                  -
+  Tallonatore 2      -            in linea o sopra la media del ruolo                  -
+  Seconda linea 1    b1 (-0.46)   ruck_offensive, placcaggi_effettuati, placcaggi_dominanti Terza linea 2
+  Seconda linea 2    -            in linea o sopra la media del ruolo                  -
+  Seconda linea 3    -            in linea o sopra la media del ruolo                  -
+  Terza linea 1      -            in linea o sopra la media del ruolo                  -
+  Terza linea 2      -            in linea o sopra la media del ruolo                  -
+  Terza linea 3      -            in linea o sopra la media del ruolo                  -
+  Terza linea 4      b2 (-0.43)   portate, offload, metri_guadagnati                   Estremo 1
+  Terza linea 5      -            in linea o sopra la media del ruolo                  -
+  Mediano mischia 1  -            in linea o sopra la media del ruolo                  -
+  Mediano mischia 2  -            in linea o sopra la media del ruolo                  -
+  Apertura 1         b2 (-0.29)   passaggi, calci_in_gioco                             Centro 2
+  Apertura 2         -            in linea o sopra la media del ruolo                  -
+  Centro 1           -            in linea o sopra la media del ruolo                  -
+  Centro 2           -            in linea o sopra la media del ruolo                  -
+  Centro 3           b2 (-0.56)   portate, offload, difensori_battuti                  Estremo 1
+  Ala 1              -            in linea o sopra la media del ruolo                  -
+  Ala 2              -            in linea o sopra la media del ruolo                  -
+  Ala 3              -            in linea o sopra la media del ruolo                  -
+  Estremo 1          -            in linea o sopra la media del ruolo                  -
+
+grafici salvati: fig_gruppi.png, fig_confronto_casuali.png
