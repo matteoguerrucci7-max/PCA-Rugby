@@ -35,12 +35,12 @@ The full derivation is in `theory.tex`. Theoretical reference: Deisenroth, Faisa
 - **Missing data**: rank-2 imputation reduces the error by 37% compared with the mean; with too high a rank the fixed point does not converge.
 
 | Power method convergence | Groups in the style space | Against random splits |
-|---|---|---|
-| ![](fig_power_convergence.png) | ![](fig_groups.png) | ![](fig_random_comparison.png) |
+| --- | --- | --- |
+| ![](figures/fig_power_convergence.png) | ![](figures/fig_groups.png) | ![](figures/fig_random_comparison.png) |
 
 | Rank k | Missing data | Sensitivity |
-|---|---|---|
-| ![](fig_eckart_young.png) | ![](fig_imputation.png) | ![](fig_sensitivity.png) |
+| --- | --- | --- |
+| ![](figures/fig_eckart_young.png) | ![](figures/fig_imputation.png) | ![](figures/fig_sensitivity.png) |
 
 ## Usage
 
