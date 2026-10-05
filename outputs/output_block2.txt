@@ -1,0 +1,8 @@
+ j   lambda power      lambda numpy     iterations   angle with numpy's b_j
+ 1     3.94498513     3.94498513        58        7.5e-05 degrees
+ 2     2.97239586     2.97239586        16        1.0e-04 degrees
+ 3     1.04652146     1.04652146        39        5.2e-05 degrees
+
+theoretical |lambda2/lambda1| = 0.7535
+measured reduction factor per iteration (eigenvector) = 0.7600
+figure saved: fig_power_convergence.png

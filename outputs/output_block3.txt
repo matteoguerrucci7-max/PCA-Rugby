@@ -1,0 +1,55 @@
+axes: b1 = contact (+) / wide game (-)
+      b2 = ball carrier (+) / low carriers: playmakers and props (-)
+explained variance with K=3: 79.6%
+
+=== Variance decomposition (optimised groups) ===
+  SS_tot = 191.1337   SS_between = 0.3033   SS_within = 190.8304
+  check SS_between + SS_within - SS_tot = -2.8e-14
+  share between groups: 0.16%
+
+=== Comparison with 5000 random splits ===
+  random SS_between: mean 31.742, minimum 4.157
+  optimised SS_between: 0.3033  (1.0% of the random mean)
+  random splits better than the optimised one: 0.00%
+
+=== Groups ===
+  Group 1  mean (b1,b2,b3) = (-0.07, +0.06, +0.09)
+     Lock 3, Back row 1, Back row 5, Scrum-half 2, Wing 1
+  Group 2  mean (b1,b2,b3) = (-0.08, -0.05, -0.02)
+     Prop 3, Lock 1, Back row 2, Fly-half 2, Wing 2
+  Group 3  mean (b1,b2,b3) = (+0.03, -0.02, -0.05)
+     Prop 4, Hooker 2, Back row 3, Fly-half 1, Centre 2
+  Group 4  mean (b1,b2,b3) = (+0.01, -0.02, +0.09)
+     Hooker 1, Lock 2, Scrum-half 1, Centre 1, Wing 3
+  Group 5  mean (b1,b2,b3) = (+0.10, +0.03, -0.11)
+     Prop 1, Prop 2, Back row 4, Centre 3, Fullback 1
+
+=== Work directions (comparison with the player's own role) ===
+  player             axis         to train                                             mentor
+  Prop 1             -            in line with or above the role mean                  -
+  Prop 2             -            in line with or above the role mean                  -
+  Prop 3             b2 (-0.28)   attacking_rucks                                      Lock 1
+  Prop 4             -            in line with or above the role mean                  -
+  Hooker 1           -            in line with or above the role mean                  -
+  Hooker 2           -            in line with or above the role mean                  -
+  Lock 1             b1 (-0.46)   attacking_rucks, tackles_made, dominant_tackles      Back row 2
+  Lock 2             -            in line with or above the role mean                  -
+  Lock 3             -            in line with or above the role mean                  -
+  Back row 1         -            in line with or above the role mean                  -
+  Back row 2         -            in line with or above the role mean                  -
+  Back row 3         -            in line with or above the role mean                  -
+  Back row 4         b2 (-0.43)   carries, offloads, metres_gained                     Fullback 1
+  Back row 5         -            in line with or above the role mean                  -
+  Scrum-half 1       -            in line with or above the role mean                  -
+  Scrum-half 2       -            in line with or above the role mean                  -
+  Fly-half 1         b2 (-0.29)   passes, kicks_in_play                                Centre 2
+  Fly-half 2         -            in line with or above the role mean                  -
+  Centre 1           -            in line with or above the role mean                  -
+  Centre 2           -            in line with or above the role mean                  -
+  Centre 3           b2 (-0.56)   carries, offloads, defenders_beaten                  Fullback 1
+  Wing 1             -            in line with or above the role mean                  -
+  Wing 2             -            in line with or above the role mean                  -
+  Wing 3             -            in line with or above the role mean                  -
+  Fullback 1         -            in line with or above the role mean                  -
+
+figures saved: fig_groups.png, fig_random_comparison.png

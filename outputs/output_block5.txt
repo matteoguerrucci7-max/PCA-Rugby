@@ -1,0 +1,25 @@
+=== (a) Power method with shift, for b1 ===
+  no shift      sigma =  0.000   theoretical ratio 0.753   iterations  47   lambda1 = 3.9449851339
+  optimal shift sigma =  1.504   theoretical ratio 0.601   iterations  29   lambda1 = 3.9449851339
+
+=== (b) Shifted inverse power method (LU once, then substitutions) ===
+  target        sigma    theoretical ratio  iterations   lambda found     error
+  lambda_1      3.80        0.1752             9       3.9449851339   1.6e-14
+  lambda_2      3.00        0.0292             5       2.9723958569   8.9e-16
+  lambda_3      1.00        0.1711             8       1.0465214633   1.1e-14
+  lambda_10     0.00        0.4764            20       0.0363789663   2.6e-15
+  (lambda_10 with sigma = 0: 'pure' inverse power method, finds the smallest eigenvalue)
+
+=== Conditioning (power method + inverse power method) ===
+  K(C) = lambda_max / lambda_min = 3.9450 / 0.0364 = 108.4
+  K(X) from the SVD = s_max / s_min = 10.41   ->  K(X)^2 = 108.4 = K(C)
+  forming C = X^T X squares the condition number: this is why the SVD of X is used
+
+=== (c) Sensitivity of the eigenvectors to noise in the data ===
+  axis   lambda   gap to neighbour    median rotation     90% rotation
+  b1     3.945       0.973              2.52 degrees       5.08 degrees
+  b2     2.972       0.973              2.92 degrees       5.34 degrees
+  b3     1.047       0.318              5.34 degrees       9.15 degrees
+  b4     0.728       0.178              8.30 degrees      13.57 degrees
+
+figure saved: fig_sensitivity.png

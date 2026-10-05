@@ -1,0 +1,28 @@
+=== 1. Eckart-Young ===
+  k   ||X-X_k||_2   s_{k+1}    ||X-X_k||_F   sqrt(sum s^2)    relative error F
+   1     8.446153    8.446153    12.054889      12.054889       77.8%
+   2     5.011638    5.011638     8.601329       8.601329       55.5%
+   3     4.180382    4.180382     6.990446       6.990446       45.1%
+   4     3.635092    3.635092     5.602745       5.602745       36.2%
+   5     2.602905    2.602905     4.263432       4.263432       27.5%
+   6     2.216851    2.216851     3.376646       3.376646       21.8%
+   7     1.944628    1.944628     2.547019       2.547019       16.4%
+   8     1.353748    1.353748     1.644910       1.644910       10.6%
+   9     0.934396    0.934396     0.934396       0.934396        6.0%
+
+=== 2. Missing data ===
+  Centre 2: missing metres_gained, dominant_tackles, defenders_beaten, lineout_jumps
+  Fullback 1: missing metres_gained, dominant_tackles, lineout_jumps, tackles_made
+
+  error (RMSE, in standard deviations) on the missing values:
+  replacement with the mean: 1.194
+  iterative SVD, k = 1:    0.951   (41 iterations)
+  iterative SVD, k = 2:    0.747   (53 iterations)
+  iterative SVD, k = 3:    0.960   (228 iterations)
+  iterative SVD, k = 4:    3.159   (1000 iterations)
+  iterative SVD, k = 5:    1.789   (1000 iterations)
+  iterative SVD, k = 6:    2.312   (1000 iterations)
+
+  k = 3: reduction factor of the change per iteration = 0.915  (linear convergence)
+
+figures saved: fig_eckart_young.png, fig_imputation.png
