@@ -64,3 +64,6 @@ The expected output of each block is in `output_block1.txt` … `output_block5.t
 ## Further work
 
 Real data from a whole league: axes estimated on hundreds of players, groups formed inside one team. For large N, compute Cv = Xᵀ(Xv)/(N−1) without forming C. For the work directions: monitoring over time with frozen axes, uncertainty on the deficits, mentor-aware groups (see `theory.tex`, Section "Work directions").
+## Italian version 
+[Versione italiana](italiano/) 
+
