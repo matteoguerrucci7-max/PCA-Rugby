@@ -61,3 +61,9 @@ python blocco5_shift_sensibilita.py   # shift, potenze inverse (LU), sensibilita
 ## Sviluppi
 
 Dati reali di un campionato intero: assi stimati su centinaia di giocatori, gruppi formati dentro una squadra. Per N grande si calcola Cv = Xᵀ(Xv)/(N−1) senza formare C.
+## Animazioni
+
+| Animazione | Contenuto | Apri |
+|---|---|---|
+| Panoramica del progetto | Metodo delle potenze e deflazione, spazio degli stili in 3D, gruppi bilanciati con gli scambi a coppie, mentori | [apri](https://htmlpreview.github.io/?https://raw.githubusercontent.com/matteoguerrucci7-max/Numerical-Methods/claude/loving-sagan-bf7h0i/download/pca_rugby_animazione.html) |
+| Direzioni di lavoro in 3D | Asse più debole rispetto al ruolo, pesi `s·B[k,j]`, filtro sul ruolo, effetto dell'allenamento `Δz = BᵀΔx`, mentore | [apri](https://htmlpreview.github.io/?https://raw.githubusercontent.com/matteoguerrucci7-max/Numerical-Methods/claude/loving-sagan-bf7h0i/download/pca_rugby_direzioni_3d.html) |
