@@ -64,6 +64,12 @@ The expected output of each block is in `output_block1.txt` … `output_block5.t
 ## Further work
 
 Real data from a whole league: axes estimated on hundreds of players, groups formed inside one team. For large N, compute Cv = Xᵀ(Xv)/(N−1) without forming C. For the work directions: monitoring over time with frozen axes, uncertainty on the deficits, mentor-aware groups (see `theory.tex`, Section "Work directions").
+
+| Animation | Content | View |
+|---|---|---|
+| Project overview | Power method and deflation, 3D style space, balanced groups by pairwise swaps, mentors | [open](https://htmlpreview.github.io/?https://raw.githubusercontent.com/matteoguerrucci7-max/Numerical-Methods/claude/loving-sagan-bf7h0i/download/pca_rugby_animation_en.html) |
+| Work directions in 3D | Weakest axis vs the role mean, loadings `s·B[k,j]`, role filter, effect of training `Δz = BᵀΔx`, mentor | [open](https://htmlpreview.github.io/?https://raw.githubusercontent.com/matteoguerrucci7-max/Numerical-Methods/claude/loving-sagan-bf7h0i/download/pca_rugby_work_directions_3d_en.html) |
+
 ## Italian version 
 [Versione italiana](italiano/) 
 
