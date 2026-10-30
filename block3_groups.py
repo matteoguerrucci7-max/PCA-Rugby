@@ -18,12 +18,15 @@ Algorithm (swap heuristic):
     groups; apply the swap that lowers SS_between the most; repeat until
     no swap improves (local minimum). Repeat from several random starts.
 """
+import os
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from synthetic_data import generate_squad, METRICS
 from block2_power_method import principal_components
+
+FIG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "figures")
 
 K = 3            # components kept (about 80% of the variance)
 G = 5            # number of groups, of 5 players each
@@ -187,7 +190,7 @@ if __name__ == "__main__":
     for s in ("top", "right"):
         ax.spines[s].set_visible(False)
     ax.legend(frameon=False, fontsize=8.5, loc="upper left", ncol=5, bbox_to_anchor=(0, -0.12))
-    fig.tight_layout(); fig.savefig("fig_groups.png", dpi=160); plt.close(fig)
+    fig.tight_layout(); fig.savefig(os.path.join(FIG_DIR, "fig_groups.png"), dpi=160); plt.close(fig)
 
     # --- figure 2: optimised against random
     fig, ax = plt.subplots(figsize=(6.6, 3.8))
@@ -199,5 +202,5 @@ if __name__ == "__main__":
     ax.set_title("5000 random splits against the optimised one", loc="left")
     for s in ("top", "right"):
         ax.spines[s].set_visible(False)
-    fig.tight_layout(); fig.savefig("fig_random_comparison.png", dpi=160); plt.close(fig)
+    fig.tight_layout(); fig.savefig(os.path.join(FIG_DIR, "fig_random_comparison.png"), dpi=160); plt.close(fig)
     print("\nfigures saved: fig_groups.png, fig_random_comparison.png")

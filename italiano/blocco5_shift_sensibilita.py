@@ -15,6 +15,7 @@ BLOCCO 5 - Accelerare il metodo delle potenze e misurare l'affidabilita' degli a
     Attesa teorica: la rotazione e' grande quando l'autovalore e' vicino ai suoi vicini
     (gap piccolo).
 """
+import os
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")
@@ -22,6 +23,8 @@ import matplotlib.pyplot as plt
 from scipy.linalg import lu_factor, lu_solve
 from synthetic_data import generate_squad
 from blocco2_potenze import metodo_potenze
+
+FIG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "figure")
 
 
 def potenze_inverse(C, sigma, v0, tol=1e-12, max_iter=1000):
@@ -113,5 +116,5 @@ if __name__ == "__main__":
     for s in ("top", "right"):
         ax.spines[s].set_visible(False)
     ax.grid(True, axis="y", color="#e4e3df", lw=0.6)
-    fig.tight_layout(); fig.savefig("fig_sensibilita.png", dpi=160); plt.close(fig)
+    fig.tight_layout(); fig.savefig(os.path.join(FIG_DIR, "fig_sensibilita.png"), dpi=160); plt.close(fig)
     print("\ngrafico salvato: fig_sensibilita.png")

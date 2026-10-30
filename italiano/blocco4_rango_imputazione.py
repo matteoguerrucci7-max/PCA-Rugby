@@ -14,11 +14,14 @@ Imputazione con SVD iterativa = iterazione di punto fisso:
 L'idea: le statistiche sono correlate (poche componenti spiegano quasi tutto), quindi
 le statistiche osservate di un giocatore dicono molto su quelle mancanti.
 """
+import os
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from synthetic_data import generate_squad, METRICS
+
+FIG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "figure")
 
 
 def rango_k(X, k):
@@ -79,7 +82,7 @@ if __name__ == "__main__":
     axs[1].set_title("Errore dell'approssimazione di rango k", loc="left")
     for a in axs:
         stile(a)
-    fig.tight_layout(); fig.savefig("fig_eckart_young.png", dpi=160); plt.close(fig)
+    fig.tight_layout(); fig.savefig(os.path.join(FIG_DIR, "fig_eckart_young.png"), dpi=160); plt.close(fig)
 
     # ---------------------------------------------------------- 2. imputazione dei dati mancanti
     mask = np.isnan(X_nan)
@@ -121,5 +124,5 @@ if __name__ == "__main__":
     axs[1].set_title("Punto fisso (k = 3): convergenza lineare", loc="left")
     for a in axs:
         stile(a)
-    fig.tight_layout(); fig.savefig("fig_imputazione.png", dpi=160); plt.close(fig)
+    fig.tight_layout(); fig.savefig(os.path.join(FIG_DIR, "fig_imputazione.png"), dpi=160); plt.close(fig)
     print("\ngrafici salvati: fig_eckart_young.png, fig_imputazione.png")

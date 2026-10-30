@@ -14,11 +14,14 @@ Imputation with iterative SVD = fixed-point iteration:
 The idea: the statistics are correlated (few components explain almost everything), so
 a player's observed statistics say a lot about the missing ones.
 """
+import os
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from synthetic_data import generate_squad, METRICS
+
+FIG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "figures")
 
 
 def rank_k(X, k):
@@ -79,7 +82,7 @@ if __name__ == "__main__":
     axs[1].set_title("Error of the rank-k approximation", loc="left")
     for a in axs:
         style(a)
-    fig.tight_layout(); fig.savefig("fig_eckart_young.png", dpi=160); plt.close(fig)
+    fig.tight_layout(); fig.savefig(os.path.join(FIG_DIR, "fig_eckart_young.png"), dpi=160); plt.close(fig)
 
     # ---------------------------------------------------------- 2. imputation of the missing data
     mask = np.isnan(X_nan)
@@ -121,5 +124,5 @@ if __name__ == "__main__":
     axs[1].set_title("Fixed point (k = 3): linear convergence", loc="left")
     for a in axs:
         style(a)
-    fig.tight_layout(); fig.savefig("fig_imputation.png", dpi=160); plt.close(fig)
+    fig.tight_layout(); fig.savefig(os.path.join(FIG_DIR, "fig_imputation.png"), dpi=160); plt.close(fig)
     print("\nfigures saved: fig_eckart_young.png, fig_imputation.png")

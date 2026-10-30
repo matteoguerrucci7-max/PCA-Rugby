@@ -10,11 +10,14 @@ Deflazione (vincolo di ortogonalita' della lagrangiana, fatto in pratica):
     C_1 = C - lambda_1 b_1 b_1^T   ha autovalori 0, lambda_2, ..., lambda_D
     -> il metodo delle potenze su C_1 trova b_2, e cosi' via.
 """
+import os
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from synthetic_data import generate_squad
+
+FIG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "figure")
 
 
 def metodo_potenze(A, v0, tol=1e-12, max_iter=10_000):
@@ -95,5 +98,5 @@ if __name__ == "__main__":
     for s in ("top", "right"):
         ax.spines[s].set_visible(False)
     ax.legend(frameon=False, fontsize=8.5)
-    fig.tight_layout(); fig.savefig("fig_potenze_convergenza.png", dpi=160)
+    fig.tight_layout(); fig.savefig(os.path.join(FIG_DIR, "fig_potenze_convergenza.png"), dpi=160)
     print("grafico salvato: fig_potenze_convergenza.png")
