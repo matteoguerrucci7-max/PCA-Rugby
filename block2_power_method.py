@@ -10,11 +10,14 @@ Deflation (the orthogonality constraint of the Lagrangian, done in practice):
     C_1 = C - lambda_1 b_1 b_1^T   has eigenvalues 0, lambda_2, ..., lambda_D
     -> the power method on C_1 finds b_2, and so on.
 """
+import os
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from synthetic_data import generate_squad
+
+FIG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "figures")
 
 
 def power_method(A, v0, tol=1e-12, max_iter=10_000):
@@ -95,5 +98,5 @@ if __name__ == "__main__":
     for s in ("top", "right"):
         ax.spines[s].set_visible(False)
     ax.legend(frameon=False, fontsize=8.5)
-    fig.tight_layout(); fig.savefig("fig_power_convergence.png", dpi=160)
+    fig.tight_layout(); fig.savefig(os.path.join(FIG_DIR, "fig_power_convergence.png"), dpi=160)
     print("figure saved: fig_power_convergence.png")

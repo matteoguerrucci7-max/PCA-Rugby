@@ -6,7 +6,7 @@ Numerical Analysis project. A rugby squad of 25 players is described by 10 stati
 1. How many "playing-style axes" are enough to describe the players, and which are they?
 2. How can the squad be split into balanced training groups, where players strong on an axis train with players who are weak on it?
 
-> The data are **synthetic** (`synthetic_data.py`): mean profiles per role plus noise.
+> The data are **synthetic** ([`synthetic_data.py`](synthetic_data.py)): mean profiles per role plus noise.
 
 ## Method
 
@@ -21,7 +21,7 @@ Numerical Analysis project. A rugby squad of 25 players is described by 10 stati
 | 7 | Reliability of the axes: rotation of the eigenvectors with perturbed data | conditioning and eigenvalue gap |
 | 8 | Rank-k approximation and missing data | **Eckart–Young**, imputation with iterative SVD (**fixed point**) |
 
-The full derivation is in `theory.tex`. Theoretical reference: Deisenroth, Faisal, Ong, *Mathematics for Machine Learning* (2020), ch. 6 and 10.
+The full derivation is in [`theory.pdf`](theory.pdf) (source: [`theory.tex`](theory.tex)). Theoretical reference: Deisenroth, Faisal, Ong, *Mathematics for Machine Learning* (2020), ch. 6 and 10.
 
 ## Main results
 
@@ -53,7 +53,7 @@ python block4_rank_imputation.py      # Eckart-Young, imputation of missing data
 python block5_shift_sensitivity.py    # shift, inverse power method (LU), sensitivity to noise
 ```
 
-The expected output of each block is in `output_block1.txt` … `output_block5.txt`.
+The expected output of each block is in [`outputs/`](outputs/) (`output_block1.txt` … `output_block5.txt`); figures are saved in [`figures/`](figures/).
 
 ## Limitations
 
@@ -67,9 +67,9 @@ Real data from a whole league: axes estimated on hundreds of players, groups for
 
 | Animation | Content | View |
 |---|---|---|
-| Project overview | Power method and deflation, 3D style space, balanced groups by pairwise swaps, mentors | [open](https://htmlpreview.github.io/?https://raw.githubusercontent.com/matteoguerrucci7-max/Numerical-Methods/claude/loving-sagan-bf7h0i/download/pca_rugby_animation_en.html) |
-| Work directions in 3D | Weakest axis vs the role mean, loadings `s·B[k,j]`, role filter, effect of training `Δz = BᵀΔx`, mentor | [open](https://htmlpreview.github.io/?https://raw.githubusercontent.com/matteoguerrucci7-max/Numerical-Methods/claude/loving-sagan-bf7h0i/download/pca_rugby_work_directions_3d_en.html) |
+| Project overview | Power method and deflation, 3D style space, balanced groups by pairwise swaps, mentors | [open](https://htmlpreview.github.io/?https://raw.githubusercontent.com/matteoguerrucci7-max/PCA-Rugby/main/animations/pca_rugby_animation_en.html) |
+| Work directions in 3D | Weakest axis vs the role mean, loadings `s·B[k,j]`, role filter, effect of training `Δz = BᵀΔx`, mentor | [open](https://htmlpreview.github.io/?https://raw.githubusercontent.com/matteoguerrucci7-max/PCA-Rugby/main/animations/pca_rugby_work_directions_3d_en.html) |
 
-## Italian version 
-[Versione italiana](italiano/) 
+## Italian version
+[Versione italiana](italiano/)
 

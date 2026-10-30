@@ -18,12 +18,15 @@ Algoritmo (euristica di scambio):
     diversi; applico lo scambio che fa scendere di piu' SS_tra; ripeto finche'
     nessuno scambio migliora (minimo locale). Ripeto da piu' partenze casuali.
 """
+import os
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from synthetic_data import generate_squad, METRICS
 from blocco2_potenze import componenti_principali
+
+FIG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "figure")
 
 K = 3            # componenti tenute (circa 80% della varianza)
 G = 5            # numero di gruppi, da 5 giocatori
@@ -187,7 +190,7 @@ if __name__ == "__main__":
     for s in ("top", "right"):
         ax.spines[s].set_visible(False)
     ax.legend(frameon=False, fontsize=8.5, loc="upper left", ncol=5, bbox_to_anchor=(0, -0.12))
-    fig.tight_layout(); fig.savefig("fig_gruppi.png", dpi=160); plt.close(fig)
+    fig.tight_layout(); fig.savefig(os.path.join(FIG_DIR, "fig_gruppi.png"), dpi=160); plt.close(fig)
 
     # --- grafico 2: ottimizzato contro casuali
     fig, ax = plt.subplots(figsize=(6.6, 3.8))
@@ -199,5 +202,5 @@ if __name__ == "__main__":
     ax.set_title("5000 divisioni casuali contro quella ottimizzata", loc="left")
     for s in ("top", "right"):
         ax.spines[s].set_visible(False)
-    fig.tight_layout(); fig.savefig("fig_confronto_casuali.png", dpi=160); plt.close(fig)
+    fig.tight_layout(); fig.savefig(os.path.join(FIG_DIR, "fig_confronto_casuali.png"), dpi=160); plt.close(fig)
     print("\ngrafici salvati: fig_gruppi.png, fig_confronto_casuali.png")

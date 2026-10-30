@@ -15,6 +15,7 @@ BLOCK 5 - Accelerating the power method and measuring the reliability of the axe
     Theoretical expectation: the rotation is large when the eigenvalue is close to its
     neighbours (small gap).
 """
+import os
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")
@@ -22,6 +23,8 @@ import matplotlib.pyplot as plt
 from scipy.linalg import lu_factor, lu_solve
 from synthetic_data import generate_squad
 from block2_power_method import power_method
+
+FIG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "figures")
 
 
 def inverse_power(C, sigma, v0, tol=1e-12, max_iter=1000):
@@ -113,5 +116,5 @@ if __name__ == "__main__":
     for s in ("top", "right"):
         ax.spines[s].set_visible(False)
     ax.grid(True, axis="y", color="#e4e3df", lw=0.6)
-    fig.tight_layout(); fig.savefig("fig_sensitivity.png", dpi=160); plt.close(fig)
+    fig.tight_layout(); fig.savefig(os.path.join(FIG_DIR, "fig_sensitivity.png"), dpi=160); plt.close(fig)
     print("\nfigure saved: fig_sensitivity.png")
