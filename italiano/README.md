@@ -67,4 +67,4 @@ Dati reali di un campionato intero: assi stimati su centinaia di giocatori, grup
 | Animazione | Contenuto | Apri |
 |---|---|---|
 | Panoramica del progetto | Metodo delle potenze e deflazione, spazio degli stili in 3D, gruppi bilanciati con gli scambi a coppie, mentori | [apri](https://matteoguerrucci7-max.github.io/PCA-Rugby/italiano/animazioni/pca_rugby_animazione.html) |
-| Direzioni di lavoro in 3D | Asse più debole rispetto al ruolo, pesi `s·B[k,j]`, filtro sul ruolo, effetto dell'allenamento `Δz = BᵀΔx`, mentore | [apri](https://htmlpreview.github.io/?https://raw.githubusercontent.com/matteoguerrucci7-max/PCA-Rugby/main/italiano/animazioni/pca_rugby_direzioni_3d.html) |
+| Direzioni di lavoro in 3D | Asse più debole rispetto al ruolo, pesi `s·B[k,j]`, filtro sul ruolo, effetto dell'allenamento `Δz = BᵀΔx`, mentore | [apri](https://matteoguerrucci7-max.github.io/PCA-Rugby/italiano/animazioni/pca_rugby_direzioni_3d.html) |
