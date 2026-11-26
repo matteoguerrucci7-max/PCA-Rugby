@@ -67,8 +67,8 @@ Real data from a whole league: axes estimated on hundreds of players, groups for
 
 | Animation | Content | View |
 |---|---|---|
-| Project overview | Power method and deflation, 3D style space, balanced groups by pairwise swaps, mentors | [open](https://htmlpreview.github.io/?https://raw.githubusercontent.com/matteoguerrucci7-max/PCA-Rugby/main/animations/pca_rugby_animation_en.html) |
-| Work directions in 3D | Weakest axis vs the role mean, loadings `s·B[k,j]`, role filter, effect of training `Δz = BᵀΔx`, mentor | [open](https://htmlpreview.github.io/?https://raw.githubusercontent.com/matteoguerrucci7-max/PCA-Rugby/main/animations/pca_rugby_work_directions_3d_en.html) |
+| Project overview | Power method and deflation, 3D style space, balanced groups by pairwise swaps, mentors | [open](https://matteoguerrucci7-max.github.io/PCA-Rugby/animations/pca_rugby_animation_en.html) |
+| Work directions in 3D | Weakest axis vs the role mean, loadings `s·B[k,j]`, role filter, effect of training `Δz = BᵀΔx`, mentor | [open](https://matteoguerrucci7-max.github.io/PCA-Rugby/animations/pca_rugby_work_directions_3d_en.html) |
 
 ## Italian version
 [Versione italiana](italiano/)
